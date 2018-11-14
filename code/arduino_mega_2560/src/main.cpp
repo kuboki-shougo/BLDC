@@ -3,13 +3,24 @@
 
 void setup()
 {
-  pinMode(13, OUTPUT); // OCR0B pin5
+  const int dead_time = 3;
+  u8 duty = 25;
+
+  pinMode(13, INPUT); // OCR0B pin5
   pinMode(4, OUTPUT); // OCR0A pin6
 
-  TCCR0A = _BV(COM0A1) | _BV(COM0B1) | _BV(WGM01) | _BV(WGM00);
-  TCCR0B = _BV(CS02);
-  OCR0A = 120; // pin6
-  OCR0B = 20;  // pin5
+  //TCCR0A = _BV(COM0A1) | _BV(COM0B1) | _BV(COM0B0) | _BV(WGM01) | _BV(WGM00);
+
+  // Phase Correct PWM Mode = _BV(WGM00)
+  // OCR0A = inverte = _BV(COM0A1)
+  // OCR0B = normal = _BV(COM0B1) | _BV(COM0B0)
+  TCCR0A = _BV(COM0A1) | _BV(COM0B1) | _BV(COM0B0) | _BV(WGM00);
+
+  // clkI/O/1024 (From prescaler) = _BV(CS02) | _BV(CS00)
+  TCCR0B = _BV(CS02) | _BV(CS00);
+
+  OCR0A = duty + dead_time; // pin6
+  OCR0B = 0xFF - duty - dead_time;  // pin5
 
   // pinMode(9, OUTPUT); // OCR1A pin9
   // pinMode(10, OUTPUT); // OCR1B pin10
