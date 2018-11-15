@@ -1,10 +1,10 @@
-#include <Arduino.h>
-#include <avr/io.h>
+#include	<Arduino.h>
+#include	<avr/io.h>
+#include	"configuration.h"
 
 void setup()
 {
-  const int dead_time = 3;
-  u8 duty = 25;
+  uint8_t duty = 25;
 
   pinMode(13, INPUT); // OCR0B pin5
   pinMode(4, OUTPUT); // OCR0A pin6
@@ -19,8 +19,8 @@ void setup()
   // clkI/O/1024 (From prescaler) = _BV(CS02) | _BV(CS00)
   TCCR0B = _BV(CS02) | _BV(CS00);
 
-  OCR0A = duty + dead_time; // pin6
-  OCR0B = 0xFF - duty - dead_time;  // pin5
+  OCR0A = duty + u8DeadTime; // pin6
+  OCR0B = 0xFF - duty - u8DeadTime;  // pin5
 
   // pinMode(9, OUTPUT); // OCR1A pin9
   // pinMode(10, OUTPUT); // OCR1B pin10
