@@ -17,11 +17,10 @@ enum struct clk_mode : uint8_t
 	Ext_Rissing_Edge = 7,
 };
 
-enum struct duty_mode : uint8_t
+enum struct stop_mode : uint8_t
 {
-	Stop = 0,
-	Normal = 1,
-	Short = 2,
+	Normal = 0,
+	Short = 1,
 };
 
 // timer1,3,4を使ったinverter pwm出力
@@ -38,17 +37,14 @@ class inverter_pwm : base
 	static const uint8_t HIGH_W_PIN = 6;  // timer 4
 	static const uint8_t LOW_W_PIN = 7;   // timer 4
 
-	static void initialize(clk_mode clk);
+	static void initialize(clk_mode clk, uint16_t dead_time);
 	static void start(void);
-	static void stop(void);
-
-	static void setDuty(duty_mode mode, uint16_t u=0, uint16_t v=0, uint16_t w=0);
-	static void setDeadTime(uint16_t time);
+	static void setDuty(uint16_t u=0, uint16_t v=0, uint16_t w=0);
+	static void stop(stop_mode mode);
 
   protected:
 
   private:
-	static duty_mode current_mode;
 	static uint16_t duty_u_h;
 	static uint16_t duty_u_l;
 	static uint16_t duty_v_h;
