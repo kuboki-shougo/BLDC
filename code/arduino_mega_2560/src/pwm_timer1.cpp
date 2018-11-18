@@ -23,7 +23,7 @@ void timer1::initialize(clk_mode clk)
 void timer1::setDuty(uint16_t d)
 {
 	duty = d;
-	OCR1AL = duty + u8DeadTime;
+	OCR1AL = duty;
 	OCR1BL = 0xFF - duty - u8DeadTime;
 	OCR1CL = 0;
 }
