@@ -1,8 +1,6 @@
 #ifndef BASE_HPP
 #define BASE_HPP
 
-#include <Arduino.h>
-
 class base
 {
   private:

@@ -1,11 +1,8 @@
 #include "inverter_pwm.hpp"
 
-uint16_t inverter_pwm::duty_u_h;
-uint16_t inverter_pwm::duty_v_h;
-uint16_t inverter_pwm::duty_w_h;
-uint16_t inverter_pwm::duty_u_l;
-uint16_t inverter_pwm::duty_v_l;
-uint16_t inverter_pwm::duty_w_l;
+uint16_t inverter_pwm::duty_u;
+uint16_t inverter_pwm::duty_v;
+uint16_t inverter_pwm::duty_w;
 uint16_t inverter_pwm::deat_time;
 
 void inverter_pwm::initialize(clk_mode clk, uint16_t dead)
@@ -20,30 +17,30 @@ void inverter_pwm::initialize(clk_mode clk, uint16_t dead)
 	pinMode(LOW_V_PIN, OUTPUT);
 	pinMode(LOW_W_PIN, OUTPUT);
 
+	// timer 1
+	OCR1AH = (uint8_t)0x00;
+	OCR1AL = (uint8_t)0x00;
+	OCR1BH = (uint8_t)0xFF;
+	OCR1BL = (uint8_t)0xFF;
+
+	// timer 3
+	OCR3AH = (uint8_t)0x00;
+	OCR3AL = (uint8_t)0x00;
+	OCR3BH = (uint8_t)0xFF;
+	OCR3BL = (uint8_t)0xFF;
+
+	// timer 4
+	OCR4AH = (uint8_t)0x00;
+	OCR4AL = (uint8_t)0x00;
+	OCR4BH = (uint8_t)0xFF;
+	OCR4BL = (uint8_t)0xFF;
+
 	stop(stop_mode::Normal);
 
 	uint8_t c = static_cast<uint8_t>(clk) & (uint8_t)0x07;
 	TCCR1B = c;
 	TCCR3B = c;
 	TCCR4B = c;
-
-	// timer 1
-	OCR1AH = (uint8_t)0x00;
-	OCR1AL = (uint8_t)0x00;
-	OCR1BH = (uint8_t)0xFF;
-	OCR1BH = (uint8_t)0xFF;
-
-	// timer 3
-	OCR3AH = (uint8_t)0x00;
-	OCR3AL = (uint8_t)0x00;
-	OCR3BH = (uint8_t)0xFF;
-	OCR3BH = (uint8_t)0xFF;
-
-	// timer 4
-	OCR4AH = (uint8_t)0x00;
-	OCR4AL = (uint8_t)0x00;
-	OCR4BH = (uint8_t)0xFF;
-	OCR4BH = (uint8_t)0xFF;	
 }
 
 void inverter_pwm::start(void)
@@ -73,27 +70,48 @@ void inverter_pwm::stop(stop_mode mode)
 	}
 }
 
+void inverter_pwm::getDuty(uint16_t *u, uint16_t *v, uint16_t *w)
+{
+	*u = duty_u;
+	*v = duty_v;
+	*w = duty_w;
+}
+
 void inverter_pwm::setDuty(uint16_t u, uint16_t v, uint16_t w)
 {
+	uint8_t h,l;
+
+	// deadtimeを考慮したduty算出
 	calcDuty(u, v, w, deat_time);
 
 	// timer1:u相
-	OCR1AH = (uint8_t)(duty_u_h >> 8);
-	OCR1AL = (uint8_t)duty_u_h;
-	OCR1BH = 0xFF - (uint8_t)(duty_u_l >> 8);
-	OCR1BL = 0xFF - (uint8_t)duty_u_l;
+	h = (uint8_t)(duty_u >> 8);
+	l = (uint8_t)duty_u;
+	OCR1AH = h;
+	OCR1AL = l;
+	OCR1BH = h;
+	OCR1BL = l;
 
 	// timer3:v相
-	OCR3AH = (uint8_t)(duty_v_h >> 8);
-	OCR3AL = (uint8_t)duty_v_h;
-	OCR3BH = 0xFF - (uint8_t)(duty_v_l >> 8);
-	OCR3BL = 0xFF - (uint8_t)duty_v_l;
+	h = (uint8_t)(duty_v >> 8);
+	l = (uint8_t)duty_v;
+	OCR3AH = h;
+	OCR3AL = l;
+	OCR3BH = h;
+	OCR3BL = l;
 
 	// timer4:w相
-	OCR4AH = (uint8_t)duty_w_h >> 8;
-	OCR4AL = (uint8_t)duty_w_h;
-	OCR4BH = 0xFF - (uint8_t)(duty_w_l >> 8);
-	OCR4BL = 0xFF - (uint8_t)duty_w_l;
+	h = (uint8_t)(duty_w >> 8);
+	l = (uint8_t)duty_w;
+	OCR4AH = h;
+	OCR4AL = l;
+	OCR4BH = h;
+	OCR4BL = l;
+}
+
+uint16_t inverter_pwm::getDeadTime(void)
+{
+	return (deat_time);
 }
 
 void inverter_pwm::calcDuty(uint16_t u, uint16_t v, uint16_t w, uint16_t dead)
@@ -101,52 +119,43 @@ void inverter_pwm::calcDuty(uint16_t u, uint16_t v, uint16_t w, uint16_t dead)
 	// u相
 	if (dead > u)
 	{
-		duty_u_h = MIN_DUTY;
-		duty_u_l = MAX_DUTY;
+		duty_u = MIN_DUTY;
 	}
 	else if (u > (MAX_DUTY - dead))
 	{
-		duty_u_h = MAX_DUTY;
-		duty_u_l = MIN_DUTY;
+		duty_u = MAX_DUTY;
 	}
 	else
 	{
-		duty_u_h = u - dead;
-		duty_u_l = MAX_DUTY - (u + dead);
+		duty_u = u - dead;
 	}
 
 	// v相
 	if (dead > v)
 	{
-		duty_v_h = MIN_DUTY;
-		duty_v_l = MAX_DUTY;
+		duty_v = MIN_DUTY;
 	}
 	else if (v > (MAX_DUTY - dead))
 	{
-		duty_v_h = MAX_DUTY;
-		duty_v_l = MIN_DUTY;
+		duty_v = MAX_DUTY;
 	}
 	else
 	{
-		duty_v_h = v - dead;
-		duty_v_l = MAX_DUTY - (v + dead);
+		duty_v = v - dead;
 	}
 
 	// w相
 	if (dead > w)
 	{
-		duty_w_h = MIN_DUTY;
-		duty_w_l = MAX_DUTY;
+		duty_w = MIN_DUTY;
 	}
 	else if (w > (MAX_DUTY - dead))
 	{
-		duty_w_h = MAX_DUTY;
-		duty_w_l = MIN_DUTY;
+		duty_w = MAX_DUTY;
 	}
 	else
 	{
-		duty_w_h = w - dead;
-		duty_w_l = MAX_DUTY - (w + dead);
+		duty_w = w - dead;
 	}
 }
 

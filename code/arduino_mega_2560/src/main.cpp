@@ -6,14 +6,17 @@ uint8_t d;
 
 void setup()
 {
-	inverter_pwm::initialize(clk_mode::Prescaling_256, 5);
+	d = 255;
+
+	// deadtime = 128us
+	inverter_pwm::initialize(clk_mode::Prescaling_1024, 1);
+	inverter_pwm::setDuty(d, d, d);
 	inverter_pwm::start();
-	d = 0;
 }
 
 void loop()
 {
 	delay(100);
-	inverter_pwm::setDuty(d, d, d);
-	d++;
+	//inverter_pwm::setDuty(d, d, d);
+	//d++;
 }
