@@ -28,8 +28,6 @@ enum struct stop_mode : uint8_t
 class inverter_pwm : base
 {
   public:
-	static const uint16_t MAX_DUTY = 255;
-	static const uint16_t MIN_DUTY = 0;
 	static const uint8_t HIGH_U_PIN = 11; // timer 1
 	static const uint8_t LOW_U_PIN = 12;  // timer 1
 	static const uint8_t HIGH_V_PIN = 5;  // timer 3
@@ -37,7 +35,7 @@ class inverter_pwm : base
 	static const uint8_t HIGH_W_PIN = 6;  // timer 4
 	static const uint8_t LOW_W_PIN = 7;   // timer 4
 
-	static void initialize(clk_mode clk, uint16_t dead_time);
+	static void initialize(clk_mode clk, uint16_t max, uint16_t dead_time);
 	static void start(void);
 	static void stop(stop_mode mode);
 
@@ -47,6 +45,8 @@ class inverter_pwm : base
 
   protected:
   private:
+	static uint16_t max_duty;
+	static uint16_t min_duty;
 	static uint16_t duty_u;
 	static uint16_t duty_v;
 	static uint16_t duty_w;

@@ -1,5 +1,7 @@
 #include "inverter_pwm.hpp"
 
+uint16_t inverter_pwm::max_duty;
+uint16_t inverter_pwm::min_duty;
 uint16_t inverter_pwm::duty_u;
 uint16_t inverter_pwm::duty_v;
 uint16_t inverter_pwm::duty_w;
@@ -8,51 +10,41 @@ uint16_t inverter_pwm::duty_v_l;
 uint16_t inverter_pwm::duty_w_l;
 uint16_t inverter_pwm::deat_time;
 
-void inverter_pwm::initialize(clk_mode clk, uint16_t dead)
+void inverter_pwm::initialize(clk_mode clk, uint16_t max, uint16_t dead)
 {
+	max_duty = max;
+	min_duty = 0;
 	deat_time = dead;
 
+	// pin mode.
 	pinMode(HIGH_U_PIN, OUTPUT);
 	pinMode(HIGH_V_PIN, OUTPUT);
 	pinMode(HIGH_W_PIN, OUTPUT);
-
 	pinMode(LOW_U_PIN, OUTPUT);
 	pinMode(LOW_V_PIN, OUTPUT);
 	pinMode(LOW_W_PIN, OUTPUT);
 
-	// Freqency - 暫定
-	ICR1H = (uint8_t)0x00;
-	ICR1L = (uint8_t)0xFF;
-	ICR3H = (uint8_t)0x00;
-	ICR3L = (uint8_t)0xFF;
-	ICR4H = (uint8_t)0x00;
-	ICR4L = (uint8_t)0xFF;
-
-	// timer 1
-	OCR1AH = (uint8_t)0x00;
-	OCR1AL = (uint8_t)0x00;
-	OCR1BH = (uint8_t)0xFF;
-	OCR1BL = (uint8_t)0xFF;
-
-	// timer 3
-	OCR3AH = (uint8_t)0x00;
-	OCR3AL = (uint8_t)0x00;
-	OCR3BH = (uint8_t)0xFF;
-	OCR3BL = (uint8_t)0xFF;
-
-	// timer 4
-	OCR4AH = (uint8_t)0x00;
-	OCR4AL = (uint8_t)0x00;
-	OCR4BH = (uint8_t)0xFF;
-	OCR4BL = (uint8_t)0xFF;
-
-	stop(stop_mode::Normal);
-
 	// Phase and Frequency Correct PWM Mode
+	stop(stop_mode::Normal);
 	uint8_t c = static_cast<uint8_t>(clk) & (uint8_t)0x07;
 	TCCR1B = _BV(WGM13) | c;
 	TCCR3B = _BV(WGM13) | c;
 	TCCR4B = _BV(WGM13) | c;
+
+	// timer 1
+	ICR1 = max_duty;
+	OCR1A = min_duty;
+	OCR1B = max_duty;
+
+	// timer 3
+	ICR3 = max_duty;
+	OCR3A = min_duty;
+	OCR3B = max_duty;
+
+	// timer 4
+	ICR4 = max_duty;
+	OCR4A = min_duty;
+	OCR4B = max_duty;
 }
 
 void inverter_pwm::start(void)
@@ -95,22 +87,16 @@ void inverter_pwm::setDuty(uint16_t u, uint16_t v, uint16_t w)
 	calcDuty(u, v, w, deat_time);
 
 	// timer1:u相
-	OCR1AH = (uint8_t)(duty_u >> 8);
-	OCR1AL = (uint8_t)duty_u;
-	OCR1BH = (uint8_t)(duty_u_l >> 8);
-	OCR1BL = (uint8_t)duty_u_l;
+	OCR1A = duty_u;
+	OCR1B = duty_u_l;
 
 	// timer3:v相
-	OCR3AH = (uint8_t)(duty_v >> 8);
-	OCR3AL = (uint8_t)duty_v;
-	OCR3BH = (uint8_t)(duty_v_l >> 8);
-	OCR3BL = (uint8_t)duty_v_l;
+	OCR3A = duty_v;
+	OCR3B = duty_v_l;
 
 	// timer4:w相
-	OCR4AH = (uint8_t)(duty_w >> 8);
-	OCR4AL = (uint8_t)duty_w;
-	OCR4BH = (uint8_t)(duty_w_l >> 8);
-	OCR4BL = (uint8_t)duty_w_l;
+	OCR4A = duty_w;
+	OCR4B = duty_w_l;
 }
 
 uint16_t inverter_pwm::getDeadTime(void)
@@ -123,13 +109,13 @@ void inverter_pwm::calcDuty(uint16_t u, uint16_t v, uint16_t w, uint16_t dead)
 	// u相
 	if (dead > u)
 	{
-		duty_u = MIN_DUTY;
-		duty_u_l = MIN_DUTY;
+		duty_u = min_duty;
+		duty_u_l = min_duty;
 	}
-	else if (u > (MAX_DUTY - dead))
+	else if (u > (max_duty - dead))
 	{
-		duty_u = MAX_DUTY;
-		duty_u_l = MAX_DUTY;
+		duty_u = max_duty;
+		duty_u_l = max_duty;
 	}
 	else
 	{
@@ -140,13 +126,13 @@ void inverter_pwm::calcDuty(uint16_t u, uint16_t v, uint16_t w, uint16_t dead)
 	// v相
 	if (dead > v)
 	{
-		duty_v = MIN_DUTY;
-		duty_v_l = MIN_DUTY;
+		duty_v = min_duty;
+		duty_v_l = min_duty;
 	}
-	else if (v > (MAX_DUTY - dead))
+	else if (v > (max_duty - dead))
 	{
-		duty_v = MAX_DUTY;
-		duty_v_l = MAX_DUTY;
+		duty_v = max_duty;
+		duty_v_l = max_duty;
 	}
 	else
 	{
@@ -157,13 +143,13 @@ void inverter_pwm::calcDuty(uint16_t u, uint16_t v, uint16_t w, uint16_t dead)
 	// w相
 	if (dead > w)
 	{
-		duty_w = MIN_DUTY;
-		duty_w_l = MIN_DUTY;
+		duty_w = min_duty;
+		duty_w_l = min_duty;
 	}
-	else if (w > (MAX_DUTY - dead))
+	else if (w > (max_duty - dead))
 	{
-		duty_w = MAX_DUTY;
-		duty_w_l = MAX_DUTY;
+		duty_w = max_duty;
+		duty_w_l = max_duty;
 	}
 	else
 	{
