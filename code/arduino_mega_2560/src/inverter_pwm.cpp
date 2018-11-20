@@ -3,6 +3,9 @@
 uint16_t inverter_pwm::duty_u;
 uint16_t inverter_pwm::duty_v;
 uint16_t inverter_pwm::duty_w;
+uint16_t inverter_pwm::duty_u_l;
+uint16_t inverter_pwm::duty_v_l;
+uint16_t inverter_pwm::duty_w_l;
 uint16_t inverter_pwm::deat_time;
 
 void inverter_pwm::initialize(clk_mode clk, uint16_t dead)
@@ -79,34 +82,26 @@ void inverter_pwm::getDuty(uint16_t *u, uint16_t *v, uint16_t *w)
 
 void inverter_pwm::setDuty(uint16_t u, uint16_t v, uint16_t w)
 {
-	uint8_t h,l;
-
 	// deadtimeを考慮したduty算出
 	calcDuty(u, v, w, deat_time);
 
 	// timer1:u相
-	h = (uint8_t)(duty_u >> 8);
-	l = (uint8_t)duty_u;
-	OCR1AH = h;
-	OCR1AL = l;
-	OCR1BH = h;
-	OCR1BL = l;
+	OCR1AH = (uint8_t)(duty_u >> 8);
+	OCR1AL = (uint8_t)duty_u;
+	OCR1BH = (uint8_t)(duty_u_l >> 8);
+	OCR1BL = (uint8_t)duty_u_l;
 
 	// timer3:v相
-	h = (uint8_t)(duty_v >> 8);
-	l = (uint8_t)duty_v;
-	OCR3AH = h;
-	OCR3AL = l;
-	OCR3BH = h;
-	OCR3BL = l;
+	OCR3AH = (uint8_t)(duty_v >> 8);
+	OCR3AL = (uint8_t)duty_v;
+	OCR3BH = (uint8_t)(duty_v_l >> 8);
+	OCR3BL = (uint8_t)duty_v_l;
 
 	// timer4:w相
-	h = (uint8_t)(duty_w >> 8);
-	l = (uint8_t)duty_w;
-	OCR4AH = h;
-	OCR4AL = l;
-	OCR4BH = h;
-	OCR4BL = l;
+	OCR4AH = (uint8_t)(duty_w >> 8);
+	OCR4AL = (uint8_t)duty_w;
+	OCR4BH = (uint8_t)(duty_w_l >> 8);
+	OCR4BL = (uint8_t)duty_w_l;
 }
 
 uint16_t inverter_pwm::getDeadTime(void)
@@ -120,42 +115,51 @@ void inverter_pwm::calcDuty(uint16_t u, uint16_t v, uint16_t w, uint16_t dead)
 	if (dead > u)
 	{
 		duty_u = MIN_DUTY;
+		duty_u_l = MIN_DUTY;
 	}
 	else if (u > (MAX_DUTY - dead))
 	{
 		duty_u = MAX_DUTY;
+		duty_u_l = MAX_DUTY;
 	}
 	else
 	{
-		duty_u = u - dead;
+		duty_u = u;
+		duty_u_l = u - dead;
 	}
 
 	// v相
 	if (dead > v)
 	{
 		duty_v = MIN_DUTY;
+		duty_v_l = MIN_DUTY;
 	}
 	else if (v > (MAX_DUTY - dead))
 	{
 		duty_v = MAX_DUTY;
+		duty_v_l = MAX_DUTY;
 	}
 	else
 	{
-		duty_v = v - dead;
+		duty_v = v;
+		duty_v_l = v - dead;
 	}
 
 	// w相
 	if (dead > w)
 	{
 		duty_w = MIN_DUTY;
+		duty_w_l = MIN_DUTY;
 	}
 	else if (w > (MAX_DUTY - dead))
 	{
 		duty_w = MAX_DUTY;
+		duty_w_l = MAX_DUTY;
 	}
 	else
 	{
-		duty_w = w - dead;
+		duty_w = w;
+		duty_w_l = w - dead;
 	}
 }
 

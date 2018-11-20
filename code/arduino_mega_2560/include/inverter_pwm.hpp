@@ -50,6 +50,9 @@ class inverter_pwm : base
 	static uint16_t duty_u;
 	static uint16_t duty_v;
 	static uint16_t duty_w;
+	static uint16_t duty_u_l;
+	static uint16_t duty_v_l;
+	static uint16_t duty_w_l;
 	static uint16_t deat_time;
 
 	static void outputLow(void);
