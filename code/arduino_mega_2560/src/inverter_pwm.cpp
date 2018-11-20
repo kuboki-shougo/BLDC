@@ -20,6 +20,14 @@ void inverter_pwm::initialize(clk_mode clk, uint16_t dead)
 	pinMode(LOW_V_PIN, OUTPUT);
 	pinMode(LOW_W_PIN, OUTPUT);
 
+	// Freqency - 暫定
+	ICR1H = (uint8_t)0x00;
+	ICR1L = (uint8_t)0xFF;
+	ICR3H = (uint8_t)0x00;
+	ICR3L = (uint8_t)0xFF;
+	ICR4H = (uint8_t)0x00;
+	ICR4L = (uint8_t)0xFF;
+
 	// timer 1
 	OCR1AH = (uint8_t)0x00;
 	OCR1AL = (uint8_t)0x00;
@@ -40,28 +48,29 @@ void inverter_pwm::initialize(clk_mode clk, uint16_t dead)
 
 	stop(stop_mode::Normal);
 
+	// Phase and Frequency Correct PWM Mode
 	uint8_t c = static_cast<uint8_t>(clk) & (uint8_t)0x07;
-	TCCR1B = c;
-	TCCR3B = c;
-	TCCR4B = c;
+	TCCR1B = _BV(WGM13) | c;
+	TCCR3B = _BV(WGM13) | c;
+	TCCR4B = _BV(WGM13) | c;
 }
 
 void inverter_pwm::start(void)
 {
-	// Phase Correct PWM Mode
+	// Phase and Frequency Correct PWM Mode
 	// A timer = normal
 	// B timer = invert
-	TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(COM1B0) | _BV(WGM10);
-	TCCR3A = _BV(COM3A1) | _BV(COM3B1) | _BV(COM3B0) | _BV(WGM30);
-	TCCR4A = _BV(COM4A1) | _BV(COM4B1) | _BV(COM4B0) | _BV(WGM40);
+	TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(COM1B0) | _BV(WGM11);
+	TCCR3A = _BV(COM3A1) | _BV(COM3B1) | _BV(COM3B0) | _BV(WGM31);
+	TCCR4A = _BV(COM4A1) | _BV(COM4B1) | _BV(COM4B0) | _BV(WGM41);
 }
 
 void inverter_pwm::stop(stop_mode mode)
 {
 	// timer停止
-	TCCR1A = _BV(WGM10);
-	TCCR3A = _BV(WGM30);
-	TCCR4A = _BV(WGM40);
+	TCCR1A = _BV(WGM11);
+	TCCR3A = _BV(WGM31);
+	TCCR4A = _BV(WGM41);
 
 	if (mode == stop_mode::Normal)
 	{
