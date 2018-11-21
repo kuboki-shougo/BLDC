@@ -1,5 +1,5 @@
-#ifndef PWM_HPP
-#define PWM_HPP
+#ifndef INVERTER_PWM_HPP
+#define INVERTER_PWM_HPP
 
 #include <Arduino.h>
 #include <avr/io.h>
