@@ -6,7 +6,6 @@ uint16_t pwm::duty_w;
 uint16_t pwm::duty_u_l;
 uint16_t pwm::duty_v_l;
 uint16_t pwm::duty_w_l;
-
 uint16_t pwm::duty_u_n1;
 uint16_t pwm::duty_v_n1;
 uint16_t pwm::duty_w_n1;
