@@ -73,7 +73,21 @@ void Timer::initialize_Timer4(CLK_MODE clk, uint16_t max)
 
 void Timer::initialize_Timer5(CLK_MODE clk, uint16_t max)
 {
+	pinMode(Timer::TIMER5A_PIN, INPUT);
+	pinMode(Timer::TIMER5B_PIN, INPUT);
+	pinMode(Timer::TIMER5C_PIN, INPUT); 
 
+	uint8_t c = static_cast<uint8_t>(clk) & (uint8_t)0x07;
+	TCCR5A = _BV(COM5A1);
+	TCCR5B = _BV(WGM53) | _BV(WGM52) | c;
+
+    ICR5 = max;
+    TCNT5 = 0;
+    TIMSK5 = _BV(OCIE5A);
+    TIFR5 = 0;
+    OCR5A = 0;
+    OCR5B = 0;  
+    OCR5C = 0;
 }
 
 void Timer::timer_start(void)
