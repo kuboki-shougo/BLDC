@@ -3,9 +3,9 @@
 
 #include <Arduino.h>
 #include <avr/io.h>
-#include "base.hpp"
+#include "Base.hpp"
 
-enum struct clk_mode : uint8_t
+enum struct CLK_MODE : uint8_t
 {
 	// 16000000 = 16Mhz = 0.0625us
 	Stop = 0,
@@ -19,36 +19,36 @@ enum struct clk_mode : uint8_t
 };
 
 // timer1,3,4を使ったinverter pwm出力
-class timer : base
+class Timer : Base
 {
   public:
-	static const uint8_t TIMER0A_PIN = 13; // timer 0
-	static const uint8_t TIMER0B_PIN = 4;  // timer 0
-	static const uint8_t TIMER1A_PIN = 11; // timer 1
-	static const uint8_t TIMER1B_PIN = 12; // timer 1
-	static const uint8_t TIMER1C_PIN = 13; // timer 1
-	static const uint8_t TIMER3A_PIN = 5; // timer 3
-	static const uint8_t TIMER3B_PIN = 2; // timer 3
-	static const uint8_t TIMER3C_PIN = 3; // timer 3
-	static const uint8_t TIMER4A_PIN = 6; // timer 4
-	static const uint8_t TIMER4B_PIN = 7; // timer 4
-	static const uint8_t TIMER4C_PIN = 8; // timer 4
-	static const uint8_t TIMER5A_PIN = 46; // timer 5
-	static const uint8_t TIMER5B_PIN = 45; // timer 5
-	static const uint8_t TIMER5C_PIN = 44; // timer 5
+	static const uint8_t TIMER0A_PIN = 13; // Timer 0
+	static const uint8_t TIMER0B_PIN = 4;  // Timer 0
+	static const uint8_t TIMER1A_PIN = 11; // Timer 1
+	static const uint8_t TIMER1B_PIN = 12; // Timer 1
+	static const uint8_t TIMER1C_PIN = 13; // Timer 1
+	static const uint8_t TIMER3A_PIN = 5; // Timer 3
+	static const uint8_t TIMER3B_PIN = 2; // Timer 3
+	static const uint8_t TIMER3C_PIN = 3; // Timer 3
+	static const uint8_t TIMER4A_PIN = 6; // Timer 4
+	static const uint8_t TIMER4B_PIN = 7; // Timer 4
+	static const uint8_t TIMER4C_PIN = 8; // Timer 4
+	static const uint8_t TIMER5A_PIN = 46; // Timer 5
+	static const uint8_t TIMER5B_PIN = 45; // Timer 5
+	static const uint8_t TIMER5C_PIN = 44; // Timer 5
 
-	static void initialize_timer0(clk_mode clk, uint16_t max);
-	static void initialize_timer1(clk_mode clk, uint16_t max);
-	static void initialize_timer3(clk_mode clk, uint16_t max);
-	static void initialize_timer4(clk_mode clk, uint16_t max);
-	static void initialize_timer5(clk_mode clk, uint16_t max);
+	static void initialize_Timer0(CLK_MODE clk, uint16_t max);
+	static void initialize_Timer1(CLK_MODE clk, uint16_t max);
+	static void initialize_Timer3(CLK_MODE clk, uint16_t max);
+	static void initialize_Timer4(CLK_MODE clk, uint16_t max);
+	static void initialize_Timer5(CLK_MODE clk, uint16_t max);
 	static void timer_start(void);
 	static void timer_stop(void);
 
   protected:
   private:
-	timer();
-	~timer();
+	Timer();
+	~Timer();
 };
 
 #endif

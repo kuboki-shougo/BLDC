@@ -4,20 +4,20 @@
 #include <Arduino.h>
 #include <avr/io.h>
 #include "base.hpp"
-#include "timer.hpp"
+#include "Timer.hpp"
 
 // timer1,3,4を使ったinverter pwm出力
-class pwm : base
+class PWM : Base
 {
   public:
-	static const uint8_t HIGH_U_PIN = timer::TIMER1A_PIN;
-	static const uint8_t LOW_U_PIN = timer::TIMER1B_PIN;
-	static const uint8_t HIGH_V_PIN = timer::TIMER3A_PIN;
-	static const uint8_t LOW_V_PIN = timer::TIMER3B_PIN;
-	static const uint8_t HIGH_W_PIN = timer::TIMER4A_PIN;
-	static const uint8_t LOW_W_PIN = timer::TIMER4B_PIN;
+	static const uint8_t HIGH_U_PIN = Timer::TIMER1A_PIN;
+	static const uint8_t LOW_U_PIN = Timer::TIMER1B_PIN;
+	static const uint8_t HIGH_V_PIN = Timer::TIMER3A_PIN;
+	static const uint8_t LOW_V_PIN = Timer::TIMER3B_PIN;
+	static const uint8_t HIGH_W_PIN = Timer::TIMER4A_PIN;
+	static const uint8_t LOW_W_PIN = Timer::TIMER4B_PIN;
 
-	static const clk_mode clk = clk_mode::Prescaling_8;
+	static const CLK_MODE clk = CLK_MODE::Prescaling_8;
 	static const uint16_t max = 1000;
 	static const uint16_t dead_time = 3;
 
@@ -38,8 +38,8 @@ class pwm : base
 	static uint16_t duty_v_n1;
 	static uint16_t duty_w_n1;
 
-	pwm();
-	~pwm();
+	PWM();
+	~PWM();
 	static void calcDuty(uint16_t duty, uint16_t *high, uint16_t *low);
 };
 

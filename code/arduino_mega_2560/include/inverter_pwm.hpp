@@ -5,7 +5,7 @@
 #include <avr/io.h>
 #include "base.hpp"
 
-enum struct clk_mode : uint8_t
+enum struct CLK_MODE : uint8_t
 {
 	// 16000000 = 16Mhz = 0.0625us
 	Stop = 0,
@@ -25,7 +25,7 @@ enum struct stop_mode : uint8_t
 };
 
 // timer1,3,4を使ったinverter pwm出力
-class inverter_pwm : base
+class inverter_pwm : Base
 {
   public:
 	static const uint8_t HIGH_U_PIN = 11; // timer 1
@@ -35,7 +35,7 @@ class inverter_pwm : base
 	static const uint8_t HIGH_W_PIN = 6;  // timer 4
 	static const uint8_t LOW_W_PIN = 7;   // timer 4
 
-	static void initialize(clk_mode clk, uint16_t max, uint16_t dead_time);
+	static void initialize(CLK_MODE clk, uint16_t max, uint16_t dead_time);
 	static void start(void);
 	static void stop(stop_mode mode);
 

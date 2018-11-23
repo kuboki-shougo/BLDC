@@ -1,6 +1,6 @@
-#include "timer.hpp"
+#include "Timer.hpp"
 
-void timer::initialize_timer0(clk_mode clk, uint16_t max)
+void Timer::initialize_Timer0(CLK_MODE clk, uint16_t max)
 {
 
 }
@@ -9,11 +9,11 @@ void timer::initialize_timer0(clk_mode clk, uint16_t max)
 /// A = normal
 /// B = inverter
 /// C = stop
-void timer::initialize_timer1(clk_mode clk, uint16_t max)
+void Timer::initialize_Timer1(CLK_MODE clk, uint16_t max)
 {
-	pinMode(timer::TIMER1A_PIN, OUTPUT);
-	pinMode(timer::TIMER1B_PIN, OUTPUT);
-	pinMode(timer::TIMER1C_PIN, INPUT);
+	pinMode(Timer::TIMER1A_PIN, OUTPUT);
+	pinMode(Timer::TIMER1B_PIN, OUTPUT);
+	pinMode(Timer::TIMER1C_PIN, INPUT);
 
 	uint8_t c = static_cast<uint8_t>(clk) & (uint8_t)0x07;
     TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(COM1B0) | _BV(WGM11);
@@ -31,11 +31,11 @@ void timer::initialize_timer1(clk_mode clk, uint16_t max)
 /// A = normal
 /// B = inverter
 /// C = stop
-void timer::initialize_timer3(clk_mode clk, uint16_t max)
+void Timer::initialize_Timer3(CLK_MODE clk, uint16_t max)
 {
-	pinMode(timer::TIMER3A_PIN, OUTPUT);
-	pinMode(timer::TIMER3B_PIN, OUTPUT);
-	pinMode(timer::TIMER3C_PIN, INPUT);
+	pinMode(Timer::TIMER3A_PIN, OUTPUT);
+	pinMode(Timer::TIMER3B_PIN, OUTPUT);
+	pinMode(Timer::TIMER3C_PIN, INPUT);
 
 	uint8_t c = static_cast<uint8_t>(clk) & (uint8_t)0x07;
     TCCR3A = _BV(COM3A1) | _BV(COM3B1) | _BV(COM3B0) | _BV(WGM31);
@@ -53,11 +53,11 @@ void timer::initialize_timer3(clk_mode clk, uint16_t max)
 /// A = normal
 /// B = inverter
 /// C = stop
-void timer::initialize_timer4(clk_mode clk, uint16_t max)
+void Timer::initialize_Timer4(CLK_MODE clk, uint16_t max)
 {
-	pinMode(timer::TIMER4A_PIN, OUTPUT);
-	pinMode(timer::TIMER4B_PIN, OUTPUT);
-	pinMode(timer::TIMER4C_PIN, INPUT);
+	pinMode(Timer::TIMER4A_PIN, OUTPUT);
+	pinMode(Timer::TIMER4B_PIN, OUTPUT);
+	pinMode(Timer::TIMER4C_PIN, INPUT);
 
 	uint8_t c = static_cast<uint8_t>(clk) & (uint8_t)0x07;
 	TCCR4A = _BV(COM4A1) | _BV(COM4B1) | _BV(COM4B0) | _BV(WGM41);
@@ -71,17 +71,17 @@ void timer::initialize_timer4(clk_mode clk, uint16_t max)
     OCR4B = max;
 }
 
-void timer::initialize_timer5(clk_mode clk, uint16_t max)
+void Timer::initialize_Timer5(CLK_MODE clk, uint16_t max)
 {
 
 }
 
-void timer::timer_start(void)
+void Timer::timer_start(void)
 {
 	GTCCR = 0x00;
 }
 
-void timer::timer_stop(void)
+void Timer::timer_stop(void)
 {
     GTCCR = _BV(TSM) | _BV(PSRASY) | _BV(PSRSYNC);
 }

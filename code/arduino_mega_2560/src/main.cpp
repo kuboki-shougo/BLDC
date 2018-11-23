@@ -1,29 +1,36 @@
 #include <Arduino.h>
 #include <avr/io.h>
-#include "pwm.hpp"
-#include "timer.hpp"
-#include "duty.hpp"
+#include "PWM.hpp"
+#include "Timer.hpp"
+#include "MotorCtrl.hpp"
 
-uint16_t d;
+float rad;
+float th;
 
 void setup()
 {
-	d = 0;;
-	timer::timer_stop();
-	pwm::initialize();
-	pwm::setDuty(d,d,d);
-	timer::timer_start();
+	rad = 0.0F;
+	th = 0.0F;
+	Timer::timer_stop();
+	PWM::initialize();
+	PWM::setDuty(0,0,0);
+	Timer::timer_start();
 }
 
 void loop()
 {
-	int vdc = analogRead(0);
-	float ad = 5.0f * ( (float)vdc / 1024.0f );
-	d = duty::calcDuty(1.0, ad);
-	pwm::setDuty(d,d,d);
-	// delay(10);
-	// if ( d >= pwm::max)
+	delay(1);
+	rad += 3.6F;
+	if ( rad > 360.0F) 
+	{
+		rad -= 360.0F;
+	}
+	th = rad * (float)PI / 180.0F;
+	MotorCtrl::inversePerk(5.0F, 0.0F, th);
+	PWM::setDuty(MotorCtrl::Duty_u, MotorCtrl::Duty_v, MotorCtrl::Duty_w);
+	// 
+	// if ( d >= PWM::max)
 	// 	d = 0;
-	// pwm::setDuty(d, d, d);
+	// PWM::setDuty(d, d, d);
 	// d += 1;
 }

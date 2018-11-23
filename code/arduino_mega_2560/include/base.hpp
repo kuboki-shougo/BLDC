@@ -1,11 +1,11 @@
 #ifndef BASE_HPP
 #define BASE_HPP
 
-class base
+class Base
 {
   private:
-	base();
-	~base();
+	Base();
+	~Base();
 	static void *operator new(size_t);
 	static void operator delete(void *);
 	static void *operator new[](size_t);

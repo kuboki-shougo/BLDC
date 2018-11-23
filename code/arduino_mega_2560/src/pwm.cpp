@@ -1,30 +1,30 @@
-#include "pwm.hpp"
+#include "PWM.hpp"
 
-uint16_t pwm::duty_u;
-uint16_t pwm::duty_v;
-uint16_t pwm::duty_w;
-uint16_t pwm::duty_u_l;
-uint16_t pwm::duty_v_l;
-uint16_t pwm::duty_w_l;
-uint16_t pwm::duty_u_n1;
-uint16_t pwm::duty_v_n1;
-uint16_t pwm::duty_w_n1;
+uint16_t PWM::duty_u;
+uint16_t PWM::duty_v;
+uint16_t PWM::duty_w;
+uint16_t PWM::duty_u_l;
+uint16_t PWM::duty_v_l;
+uint16_t PWM::duty_w_l;
+uint16_t PWM::duty_u_n1;
+uint16_t PWM::duty_v_n1;
+uint16_t PWM::duty_w_n1;
 
-void pwm::initialize(void)
+void PWM::initialize(void)
 {
-	timer::initialize_timer1(pwm::clk, pwm::max);
-	timer::initialize_timer3(pwm::clk, pwm::max);
-	timer::initialize_timer4(pwm::clk, pwm::max);
+	Timer::initialize_Timer1(PWM::clk, PWM::max);
+	Timer::initialize_Timer3(PWM::clk, PWM::max);
+	Timer::initialize_Timer4(PWM::clk, PWM::max);
 }
 
-void pwm::getDuty(uint16_t *u, uint16_t *v, uint16_t *w)
+void PWM::getDuty(uint16_t *u, uint16_t *v, uint16_t *w)
 {
 	*u = duty_u;
 	*v = duty_v;
 	*w = duty_w;
 }
 
-void pwm::setDuty(uint16_t u, uint16_t v, uint16_t w)
+void PWM::setDuty(uint16_t u, uint16_t v, uint16_t w)
 {
 	duty_u_n1 = duty_u;
 	duty_v_n1 = duty_v;
@@ -36,7 +36,7 @@ void pwm::setDuty(uint16_t u, uint16_t v, uint16_t w)
 	calcDuty(w, &duty_w, &duty_w_l);
 
 	// 縦短絡防止
-	// timer1:u相
+	// Timer1:u相
 	if (duty_u > duty_u_n1)
 	{
 		OCR1B = duty_u_l;
@@ -48,7 +48,7 @@ void pwm::setDuty(uint16_t u, uint16_t v, uint16_t w)
 		OCR1B = duty_u_l;
 	}
 
-	// timer3:v相
+	// Timer3:v相
 	if (duty_v > duty_v_n1)
 	{
 		OCR3B = duty_v_l;
@@ -60,7 +60,7 @@ void pwm::setDuty(uint16_t u, uint16_t v, uint16_t w)
 		OCR3B = duty_v_l;
 	}
 
-	// timer4:w相
+	// Timer4:w相
 	if (duty_w > duty_w_n1)
 	{
 		OCR4B = duty_w_l;
@@ -73,17 +73,17 @@ void pwm::setDuty(uint16_t u, uint16_t v, uint16_t w)
 	}
 }
 
-void pwm::calcDuty(uint16_t duty, uint16_t *high, uint16_t *low)
+void PWM::calcDuty(uint16_t duty, uint16_t *high, uint16_t *low)
 {
 	if (duty <= dead_time)
 	{
 		*high = 0;
 		*low = 0;
 	}
-	else if (duty >= (pwm::max - dead_time))
+	else if (duty >= (PWM::max - dead_time))
 	{
-		*high = pwm::max;
-		*low = pwm::max;
+		*high = PWM::max;
+		*low = PWM::max;
 	}
 	else
 	{

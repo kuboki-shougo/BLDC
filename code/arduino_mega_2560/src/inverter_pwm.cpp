@@ -10,7 +10,7 @@ uint16_t inverter_pwm::duty_v_l;
 uint16_t inverter_pwm::duty_w_l;
 uint16_t inverter_pwm::deat_time;
 
-void inverter_pwm::initialize(clk_mode clk, uint16_t max, uint16_t dead)
+void inverter_pwm::initialize(CLK_MODE clk, uint16_t max, uint16_t dead)
 {
 	max_duty = max;
 	min_duty = 0;
