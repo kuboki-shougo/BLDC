@@ -43,7 +43,7 @@ ISR(TIMER5_COMPA_vect)
 	th = rad * (float)PI / 180.0F;
 
 	//逆パーク変換
-	MotorCtrl::inversePerk(5.0F, 0.0F, th);
+	MotorCtrl::InversePerk(5.0F, 0.0F, th);
 
 	//Duty設定
 	PWM::setDuty(MotorCtrl::Duty_u, MotorCtrl::Duty_v, MotorCtrl::Duty_w);
