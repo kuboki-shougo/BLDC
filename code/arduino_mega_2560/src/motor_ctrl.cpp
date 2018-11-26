@@ -1,5 +1,4 @@
-
-#include "MotorCtrl.hpp"
+#include <motor_ctrl.hpp>
 
 float MotorCtrl::Vq;
 float MotorCtrl::Vd;

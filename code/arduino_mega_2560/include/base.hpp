@@ -4,12 +4,12 @@
 class Base
 {
   private:
-	Base();
-	~Base();
-	static void *operator new(size_t);
-	static void operator delete(void *);
-	static void *operator new[](size_t);
-	static void operator delete[](void *);
+    Base();
+    ~Base();
+    static void *operator new(size_t);
+    static void operator delete(void *);
+    static void *operator new[](size_t);
+    static void operator delete[](void *);
 };
 
 #endif
